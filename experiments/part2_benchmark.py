@@ -48,7 +48,8 @@ def sweep_values(kind, params):
     return [p for p in NPROBE if p <= params["nlist"]]
 
 
-def run_config(ds, kind, params, quantizers, repeats, n_test, log):
+def run_config(ds, kind, params, quantizers, repeats, n_test, log,
+               part="2", stop_recall=STOP_RECALL):
     timing.set_threads(os.cpu_count())
     index, build_s = indexes.build(kind, params, ds.base, quantizers)
     nbytes = timing.index_bytes(index)
@@ -61,7 +62,7 @@ def run_config(ds, kind, params, quantizers, repeats, n_test, log):
     for value in sweep_values(kind, params):
         indexes.set_search_param(index, kind, value)
         common = dict(
-            part="2", dataset=ds.name, n_base=ds.n, index=kind, build_params=params,
+            part=part, dataset=ds.name, n_base=ds.n, index=kind, build_params=params,
             search_params={pname: value}, mode="single", threads=1,
             build_s=build_s, build_threads=os.cpu_count(), index_bytes=nbytes,
             bytes_per_vector=nbytes / ds.n,
@@ -85,7 +86,7 @@ def run_config(ds, kind, params, quantizers, repeats, n_test, log):
             f"QPS={len(q_test) / med:9.1f}")
 
         history.append(r_tune)
-        if r_tune >= STOP_RECALL:
+        if r_tune >= stop_recall:
             break
         if len(history) >= 3 and history[-1] - history[-3] < PLATEAU:
             break
