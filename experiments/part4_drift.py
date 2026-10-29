@@ -178,7 +178,8 @@ def main():
                         threads=1, repeats=repeats, recall10=rec, qps=qps, median_s=med,
                         all_s=times, build_s=build_s, build_threads=os.cpu_count(),
                         index_bytes=nbytes, bytes_per_vector=nbytes / len(base),
-                        note=f"n_old={n_old}, n_new={n_new}, seed={drift.SEED}"))
+                        note=json.dumps({"n_old": n_old, "n_new": n_new, "seed": drift.SEED,
+                                         "dist_per_query": ndis, **m})))
                     mech.append({"alpha": alpha, "index": kind, "version": version,
                                  "queries": q_set, "recall10": rec, "qps": qps,
                                  "dist_per_query": ndis, **m})

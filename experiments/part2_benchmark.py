@@ -117,7 +117,7 @@ def main():
         rows = old.to_dict("records")
         done = set(zip(old.dataset, old["index"], old.build_params))
 
-    logf = open(log_path, "a")
+    logf = open(log_path, "a" if args.resume else "w")
 
     def log(msg):
         print(msg, flush=True)
